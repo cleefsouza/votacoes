@@ -1,4 +1,4 @@
-package com.api.votacoes.services;
+package com.api.votacoes.services.interfaces;
 
 import com.api.votacoes.models.PautaModel;
 import org.springframework.data.domain.Page;

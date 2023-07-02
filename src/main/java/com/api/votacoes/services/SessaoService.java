@@ -2,11 +2,12 @@ package com.api.votacoes.services;
 
 import com.api.votacoes.models.SessaoModel;
 import com.api.votacoes.repositories.SessaoRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.api.votacoes.services.interfaces.ISessaoService;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.UUID;
 
 @Service
 public class SessaoService implements ISessaoService {
@@ -19,10 +20,17 @@ public class SessaoService implements ISessaoService {
 
     @Transactional
     public SessaoModel salvar(SessaoModel sessaoModel) {
+        // criar job para encerrar sessão
+
         return sessaoRepository.save(sessaoModel);
     }
 
-    public Page<SessaoModel> buscarSessoes(Pageable pageable) {
-        return sessaoRepository.findAll(pageable);
+    public boolean estaEncerrada(UUID pautaId) {
+
+        if (!sessaoRepository.existsByPauta_Id(pautaId)) {
+            throw new EntityNotFoundException("Sessão não encontrada.");
+        }
+
+        return sessaoRepository.estaEncerrada(pautaId);
     }
 }

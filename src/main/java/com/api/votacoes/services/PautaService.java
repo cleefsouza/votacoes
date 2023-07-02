@@ -2,6 +2,7 @@ package com.api.votacoes.services;
 
 import com.api.votacoes.models.PautaModel;
 import com.api.votacoes.repositories.PautaRepository;
+import com.api.votacoes.services.interfaces.IPautaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

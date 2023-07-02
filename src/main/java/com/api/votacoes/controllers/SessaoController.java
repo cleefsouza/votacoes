@@ -1,25 +1,26 @@
 package com.api.votacoes.controllers;
 
-import com.api.votacoes.dtos.SessaoDto;
+import com.api.votacoes.dtos.request.SessaoRequestDto;
 import com.api.votacoes.models.SessaoModel;
-import com.api.votacoes.services.IPautaService;
-import com.api.votacoes.services.ISessaoService;
+import com.api.votacoes.services.interfaces.IPautaService;
+import com.api.votacoes.services.interfaces.ISessaoService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.UUID;
+
+import static com.api.votacoes.utils.ConstantesUtils.PAUTA_URL;
+import static com.api.votacoes.utils.ConstantesUtils.SESSAO_URL;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/sessao")
+@RequestMapping(PAUTA_URL + "/{pautaId}" + SESSAO_URL)
 public class SessaoController {
 
     final ISessaoService sessaoService;
@@ -31,25 +32,20 @@ public class SessaoController {
         this.pautaService = pautaService;
     }
 
-    @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody @Valid SessaoDto sessaoDto) {
+    @PostMapping("/iniciar")
+    public ResponseEntity<Object> salvar(@PathVariable @Valid UUID pautaId, @RequestBody @Valid SessaoRequestDto sessaoRequestDto) {
 
-        var pauta = pautaService.buscarPorId(sessaoDto.getPautaId());
+        var pauta = pautaService.buscarPorId(pautaId);
 
         if (!pauta.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pauta não encontrada.");
+            throw new EntityNotFoundException("Pauta não encontrada.");
         }
 
         var sessaoModel = new SessaoModel();
-        BeanUtils.copyProperties(sessaoDto, sessaoModel);
+        BeanUtils.copyProperties(sessaoRequestDto, sessaoModel);
         sessaoModel.setPauta(pauta.get());
         sessaoModel.setDataCriacao(LocalDateTime.now(ZoneId.of("UTC")));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(sessaoService.salvar(sessaoModel));
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<SessaoModel>> buscarSessoes(@PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(sessaoService.buscarSessoes(pageable));
     }
 }
