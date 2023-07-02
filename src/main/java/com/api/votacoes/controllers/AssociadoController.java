@@ -20,7 +20,7 @@ import static com.api.votacoes.utils.ConstantesUtils.ASSOCIADO_URL;
 @RequestMapping(ASSOCIADO_URL)
 public class AssociadoController {
 
-    final IAssociadoService associadoService;
+    private final IAssociadoService associadoService;
 
     public AssociadoController(IAssociadoService associadoService) {
         this.associadoService = associadoService;

@@ -14,7 +14,7 @@ import java.util.UUID;
 @Service
 public class PautaService implements IPautaService {
 
-    final PautaRepository pautaRepository;
+    private final PautaRepository pautaRepository;
 
     public PautaService(PautaRepository pautaRepository) {
         this.pautaRepository = pautaRepository;

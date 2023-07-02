@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class AssociadoService implements IAssociadoService {
 
-    final AssociadoRepository associadoRepository;
+    private final AssociadoRepository associadoRepository;
 
     public AssociadoService(AssociadoRepository associadoRepository) {
         this.associadoRepository = associadoRepository;

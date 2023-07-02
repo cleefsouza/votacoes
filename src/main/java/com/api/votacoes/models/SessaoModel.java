@@ -29,4 +29,8 @@ public class SessaoModel implements Serializable {
 
     @Column(nullable = false)
     private LocalDateTime dataCriacao;
+
+    public void encerrarSessao() {
+        this.encerrada = true;
+    }
 }

@@ -9,4 +9,6 @@ public interface ISessaoService {
     SessaoModel salvar(SessaoModel sessaoModel);
 
     boolean estaEncerrada(UUID pautaId);
+
+    void iniciarSessao(SessaoModel sessao);
 }

@@ -27,13 +27,13 @@ import static com.api.votacoes.utils.ConstantesUtils.PAUTA_URL;
 @RequestMapping(PAUTA_URL + "/{pautaId}")
 public class VotoController {
 
-    final IVotoService votoService;
+    private final IVotoService votoService;
 
-    final ISessaoService sessaoService;
+    private final ISessaoService sessaoService;
 
-    final IAssociadoService associadoService;
+    private final IAssociadoService associadoService;
 
-    final IPautaService pautaService;
+    private final IPautaService pautaService;
 
     public VotoController(IVotoService votoService, ISessaoService sessaoService, IAssociadoService associadoService, IPautaService pautaService) {
         this.votoService = votoService;

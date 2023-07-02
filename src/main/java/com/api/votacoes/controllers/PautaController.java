@@ -24,7 +24,7 @@ import static com.api.votacoes.utils.ConstantesUtils.PAUTA_URL;
 @RequestMapping(PAUTA_URL)
 public class PautaController {
 
-    final IPautaService pautaService;
+    private final IPautaService pautaService;
 
     public PautaController(IPautaService pautaService) {
         this.pautaService = pautaService;

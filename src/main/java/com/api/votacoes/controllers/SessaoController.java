@@ -23,9 +23,9 @@ import static com.api.votacoes.utils.ConstantesUtils.SESSAO_URL;
 @RequestMapping(PAUTA_URL + "/{pautaId}" + SESSAO_URL)
 public class SessaoController {
 
-    final ISessaoService sessaoService;
+    private final ISessaoService sessaoService;
 
-    final IPautaService pautaService;
+    private final IPautaService pautaService;
 
     public SessaoController(ISessaoService sessaoService, IPautaService pautaService) {
         this.sessaoService = sessaoService;
@@ -41,11 +41,14 @@ public class SessaoController {
             throw new EntityNotFoundException("Pauta não encontrada.");
         }
 
-        var sessaoModel = new SessaoModel();
+        SessaoModel sessaoModel = new SessaoModel();
         BeanUtils.copyProperties(sessaoRequestDto, sessaoModel);
         sessaoModel.setPauta(pauta.get());
         sessaoModel.setDataCriacao(LocalDateTime.now(ZoneId.of("UTC")));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(sessaoService.salvar(sessaoModel));
+        SessaoModel response = sessaoService.salvar(sessaoModel);
+        sessaoService.iniciarSessao(response);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

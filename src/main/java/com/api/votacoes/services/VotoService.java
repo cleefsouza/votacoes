@@ -15,11 +15,11 @@ import java.util.UUID;
 @Service
 public class VotoService implements IVotoService {
 
-    final VotoRepository votoRepository;
+    private final VotoRepository votoRepository;
 
-    final PautaRepository pautaRepository;
+    private final PautaRepository pautaRepository;
 
-    final SessaoRepository sessaoRepository;
+    private final SessaoRepository sessaoRepository;
 
     public VotoService(VotoRepository votoRepository, PautaRepository pautaRepository, SessaoRepository sessaoRepository) {
         this.votoRepository = votoRepository;
