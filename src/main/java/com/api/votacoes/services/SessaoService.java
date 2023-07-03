@@ -63,4 +63,8 @@ public class SessaoService implements ISessaoService {
 
         executorService.shutdown();
     }
+
+    public boolean existeSessao(UUID pautaId) {
+        return sessaoRepository.existsByPauta_Id(pautaId);
+    }
 }

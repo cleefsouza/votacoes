@@ -5,6 +5,7 @@ import com.api.votacoes.models.SessaoModel;
 import com.api.votacoes.services.interfaces.IPautaService;
 import com.api.votacoes.services.interfaces.ISessaoService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +16,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
 
-import static com.api.votacoes.utils.ConstantesUtils.PAUTA_URL;
+import static com.api.votacoes.utils.ConstantesUtils.PAUTA_URL_ID;
 import static com.api.votacoes.utils.ConstantesUtils.SESSAO_URL;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping(PAUTA_URL + "/{pautaId}" + SESSAO_URL)
+@RequestMapping(PAUTA_URL_ID + SESSAO_URL)
 public class SessaoController {
 
     private final ISessaoService sessaoService;
@@ -34,6 +35,10 @@ public class SessaoController {
 
     @PostMapping("/iniciar")
     public ResponseEntity<Object> salvar(@PathVariable @Valid UUID pautaId, @RequestBody @Valid SessaoRequestDto sessaoRequestDto) {
+
+        if (sessaoService.existeSessao(pautaId)) {
+            throw new DataIntegrityViolationException("Já existe uma sessão para essa pauta.");
+        }
 
         var pauta = pautaService.buscarPorId(pautaId);
 

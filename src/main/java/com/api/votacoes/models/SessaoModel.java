@@ -20,8 +20,8 @@ public class SessaoModel implements Serializable {
     @Column(nullable = false)
     private int duracao;
 
-    @ManyToOne
-    @JoinColumn(name = "PAUTA_ID")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PAUTA_ID", nullable = false, unique = true)
     private PautaModel pauta;
 
     @Column(nullable = false)

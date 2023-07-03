@@ -21,11 +21,11 @@ public class VotoModel implements Serializable {
     @Column(nullable = false, length = 3)
     private String voto;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PAUTA_ID", nullable = false)
     private PautaModel pauta;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ASSOCIADO_ID", nullable = false)
     private AssociadoModel associado;
 

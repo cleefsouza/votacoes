@@ -11,6 +11,7 @@ import com.api.votacoes.services.interfaces.IAssociadoService;
 import com.api.votacoes.services.interfaces.IPautaService;
 import com.api.votacoes.services.interfaces.ISessaoService;
 import com.api.votacoes.services.interfaces.IVotoService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +21,11 @@ import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.api.votacoes.utils.ConstantesUtils.PAUTA_URL;
+import static com.api.votacoes.utils.ConstantesUtils.PAUTA_URL_ID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping(PAUTA_URL + "/{pautaId}")
+@RequestMapping(PAUTA_URL_ID)
 public class VotoController {
 
     private final IVotoService votoService;
@@ -45,6 +46,8 @@ public class VotoController {
     @PostMapping("/votar")
     public ResponseEntity<Object> salvar(@PathVariable @Valid UUID pautaId, @RequestBody @Valid VotoRequestDto votoRequestDto) {
 
+        votoRequestDto.validarVoto();
+
         Optional<PautaModel> pauta = pautaService.buscarPorId(pautaId);
         this.validarPauta(pauta);
 
@@ -60,6 +63,11 @@ public class VotoController {
 
     @GetMapping("/resultado")
     public ResponseEntity<ResultadoResponseDto> buscarResultado(@PathVariable @Valid UUID pautaId) {
+
+        if (!sessaoService.estaEncerrada(pautaId)) {
+            throw new DataIntegrityViolationException("Sessão em andamento.");
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(votoService.buscarResultado(pautaId));
     }
 

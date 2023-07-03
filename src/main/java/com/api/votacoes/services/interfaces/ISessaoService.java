@@ -11,4 +11,6 @@ public interface ISessaoService {
     boolean estaEncerrada(UUID pautaId);
 
     void iniciarSessao(SessaoModel sessao);
+
+    boolean existeSessao(UUID pautaId);
 }

@@ -18,4 +18,10 @@ public class VotoRequestDto {
     @NotBlank
     @CPF(message = "CPF com formato inválido.")
     private String cpf;
+
+    public void validarVoto() {
+        if (!this.voto.equalsIgnoreCase("Sim") && !this.voto.equalsIgnoreCase("Não")) {
+            throw new IllegalArgumentException("Voto com formato inválido.");
+        }
+    }
 }
