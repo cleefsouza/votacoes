@@ -1,5 +1,6 @@
 package com.api.votacoes.services;
 
+import com.api.votacoes.dtos.response.ResultadoResponseDto;
 import com.api.votacoes.models.SessaoModel;
 import com.api.votacoes.repositories.SessaoRepository;
 import com.api.votacoes.services.interfaces.ISessaoService;
@@ -20,11 +21,14 @@ public class SessaoService implements ISessaoService {
 
     private final IVotoService votoService;
 
+    private final RabbitMqService rabbitMqService;
+
     private ScheduledExecutorService executorService;
 
-    public SessaoService(SessaoRepository sessaoRepository, IVotoService votoService) {
+    public SessaoService(SessaoRepository sessaoRepository, IVotoService votoService, RabbitMqService rabbitMqService) {
         this.sessaoRepository = sessaoRepository;
         this.votoService = votoService;
+        this.rabbitMqService = rabbitMqService;
     }
 
     @Transactional
@@ -54,7 +58,8 @@ public class SessaoService implements ISessaoService {
         sessao.encerrarSessao();
         sessaoRepository.save(sessao);
 
-        votoService.buscarResultado(sessao.getPauta().getId());
+        ResultadoResponseDto resultado = votoService.buscarResultado(sessao.getPauta().getId());
+        rabbitMqService.enviarMensagem(resultado);
 
         executorService.shutdown();
     }

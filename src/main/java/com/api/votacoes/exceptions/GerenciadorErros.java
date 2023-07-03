@@ -1,6 +1,7 @@
 package com.api.votacoes.exceptions;
 
 import com.api.votacoes.dtos.response.ErroResponseDto;
+import com.fasterxml.jackson.core.JsonParseException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +29,12 @@ public class GerenciadorErros {
         return new ResponseEntity<>(ErroResponseDto.build(HttpStatus.FORBIDDEN.value(), ex), HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(SessaoEncerradaException.class)
-    public ResponseEntity<Object> sessaoEncerrada(Exception ex) {
+    @ExceptionHandler({SessaoEncerradaException.class, MensagemNaoEnviadaException.class})
+    public ResponseEntity<Object> falhaNaRequisicao(Exception ex) {
         return new ResponseEntity<>(ErroResponseDto.build(HttpStatus.BAD_REQUEST.value(), ex), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({IllegalArgumentException.class, MethodArgumentNotValidException.class, JsonParseException.class})
     public ResponseEntity<Object> argumentoInvalido(Exception ex) {
         return new ResponseEntity<>(ErroResponseDto.build(HttpStatus.BAD_REQUEST.value(), ex), HttpStatus.BAD_REQUEST);
     }
