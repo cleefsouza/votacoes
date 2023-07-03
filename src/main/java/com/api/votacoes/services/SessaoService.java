@@ -5,6 +5,7 @@ import com.api.votacoes.models.SessaoModel;
 import com.api.votacoes.repositories.SessaoRepository;
 import com.api.votacoes.services.interfaces.ISessaoService;
 import com.api.votacoes.services.interfaces.IVotoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -14,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class SessaoService implements ISessaoService {
 
@@ -39,7 +41,8 @@ public class SessaoService implements ISessaoService {
     public boolean estaEncerrada(UUID pautaId) {
 
         if (!sessaoRepository.existsByPauta_Id(pautaId)) {
-            throw new EntityNotFoundException("Sessão não encontrada.");
+            log.error(String.format("Não existe sessão de votação para pauta %s no banco de dados", pautaId));
+            throw new EntityNotFoundException("Sessão não encontrada");
         }
 
         return sessaoRepository.estaEncerrada(pautaId);
@@ -47,21 +50,29 @@ public class SessaoService implements ISessaoService {
 
     public void iniciarSessao(SessaoModel sessao) {
         try {
+            log.info(String.format("Iniciando sessão de votação %s com duração de %d minutos", sessao.getId(), sessao.getDuracao()));
             executorService = Executors.newSingleThreadScheduledExecutor();
             executorService.schedule(() -> this.encerrarSessao(sessao), sessao.getDuracao(), TimeUnit.MINUTES);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Não foi possivel iniciar a sessão.");
+            log.error("Ocorreu um erro ao tentar iniciar uma sessão de votação");
+            throw new IllegalArgumentException("Não foi possivel iniciar a sessão");
         }
     }
 
     public void encerrarSessao(SessaoModel sessao) {
+        log.info(String.format("Encerrando sessão de votação %s com duração de %d minutos", sessao.getId(), sessao.getDuracao()));
+
         sessao.encerrarSessao();
         sessaoRepository.save(sessao);
 
+        log.info("Buscando resultado da votação");
         ResultadoResponseDto resultado = votoService.buscarResultado(sessao.getPauta().getId());
+
+        log.info("Iniciando envio de mensagem para fila no rabbitmq");
         rabbitMqService.enviarMensagem(resultado);
 
         executorService.shutdown();
+        log.info(String.format("Sessão %s encerrada com sucesso", sessao.getId()));
     }
 
     public boolean existeSessao(UUID pautaId) {

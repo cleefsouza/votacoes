@@ -34,3 +34,6 @@ build/
 
 ### RabbitMQ ###
 /src/main/resources/rabbitmqbckp/*
+
+### Logger ###
+/logs/*

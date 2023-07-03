@@ -3,10 +3,12 @@ package com.api.votacoes.dtos.response;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+@Slf4j
 @Getter
 @Setter
 public class ResultadoResponseDto {
@@ -37,16 +39,16 @@ public class ResultadoResponseDto {
         this.totalVotos = this.votosSim + this.votosNao;
 
         if (this.votosSim > this.votosNao) {
-            this.resultado = String.format("Pauta aprovada com %s dos votos a favor.", this.votosSim);
+            this.resultado = String.format("Pauta aprovada com %s dos votos a favor", this.votosSim);
             this.aprovada = true;
             return;
         }
 
         if (votosSim == votosNao) {
-            this.resultado = "Votação empatada.";
+            this.resultado = "Votação empatada";
             return;
         }
 
-        this.resultado = String.format("Pauta reprovada com %s dos votos contra.", this.votosNao);
+        this.resultado = String.format("Pauta reprovada com %s dos votos contra", this.votosNao);
     }
 }

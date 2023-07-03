@@ -14,6 +14,6 @@ public class AssociadoRequestDto {
     private String nome;
 
     @NotBlank
-    @CPF(message = "CPF com formato inválido.")
+    @CPF(message = "CPF com formato inválido")
     private String cpf;
 }

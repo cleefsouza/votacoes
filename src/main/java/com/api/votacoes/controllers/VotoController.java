@@ -11,6 +11,7 @@ import com.api.votacoes.services.interfaces.IAssociadoService;
 import com.api.votacoes.services.interfaces.IPautaService;
 import com.api.votacoes.services.interfaces.ISessaoService;
 import com.api.votacoes.services.interfaces.IVotoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import java.util.UUID;
 
 import static com.api.votacoes.utils.ConstantesUtils.PAUTA_URL_ID;
 
+@Slf4j
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping(PAUTA_URL_ID)
@@ -48,16 +50,15 @@ public class VotoController {
 
         votoRequestDto.validarVoto();
 
-        Optional<PautaModel> pauta = pautaService.buscarPorId(pautaId);
-        this.validarPauta(pauta);
+        PautaModel pauta = this.validarPauta(pautaId);
 
         // verificar cpf do associado
 
-        var associado = associadoService.buscarPorCpf(votoRequestDto.getCpf());
-        this.validarAssociado(associado, pauta.get().getId());
+        AssociadoModel associado = this.validarAssociado(votoRequestDto.getCpf(), pauta.getId());
 
-        var votoModel = VotoModel.build(votoRequestDto.getVoto(), pauta.get(), associado.get());
+        var votoModel = VotoModel.build(votoRequestDto.getVoto(), pauta, associado);
 
+        log.info("Iniciando persistencia do voto na pauta " + pautaId);
         return ResponseEntity.status(HttpStatus.OK).body(votoService.salvar(votoModel));
     }
 
@@ -65,31 +66,45 @@ public class VotoController {
     public ResponseEntity<ResultadoResponseDto> buscarResultado(@PathVariable @Valid UUID pautaId) {
 
         if (!sessaoService.estaEncerrada(pautaId)) {
-            throw new DataIntegrityViolationException("Sessão em andamento.");
+            log.error(String.format("Não foi possível gerar o resultado, votação da pauta %s em andamento", pautaId));
+            throw new DataIntegrityViolationException("Sessão em andamento");
         }
 
+        log.info("Buscando resultado da votação na pauta " + pautaId);
         return ResponseEntity.status(HttpStatus.OK).body(votoService.buscarResultado(pautaId));
     }
 
-    private void validarPauta(Optional<PautaModel> pauta) {
+    private PautaModel validarPauta(UUID pautaId) {
+
+        Optional<PautaModel> pauta = pautaService.buscarPorId(pautaId);
 
         if (!pauta.isPresent()) {
-            throw new EntityNotFoundException("Pauta não encontrada.");
+            log.error(String.format("Pauta %s não encontrada no banco de dados", pautaId));
+            throw new EntityNotFoundException("Pauta não encontrada");
         }
 
         if (sessaoService.estaEncerrada(pauta.get().getId())) {
-            throw new SessaoEncerradaException("Sessão encerrada.");
+            log.error("Votação encerrada para pauta " + pauta.get().getId());
+            throw new SessaoEncerradaException("Sessão encerrada");
         }
+
+        return pauta.get();
     }
 
-    private void validarAssociado(Optional<AssociadoModel> associado, UUID pautaId) {
+    private AssociadoModel validarAssociado(String cpf, UUID pautaId) {
+
+        Optional<AssociadoModel> associado = associadoService.buscarPorCpf(cpf);
 
         if (!associado.isPresent()) {
-            throw new EntityNotFoundException("Associado não encontrado.");
+            log.error(String.format("Associado %s não encontrada no banco de dados", cpf));
+            throw new EntityNotFoundException("Associado não encontrado");
         }
 
         if (votoService.associadoJaVotou(pautaId, associado.get().getCpf())) {
-            throw new AssociadoJaVotouException("Associado já votou nessa pauta.");
+            log.error(String.format("Associado %s já votou na pauta %s", associado.get().getCpf(), pautaId));
+            throw new AssociadoJaVotouException("Associado já votou nessa pauta");
         }
+
+        return associado.get();
     }
 }

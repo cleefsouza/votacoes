@@ -6,12 +6,14 @@ import com.api.votacoes.repositories.PautaRepository;
 import com.api.votacoes.repositories.SessaoRepository;
 import com.api.votacoes.repositories.VotoRepository;
 import com.api.votacoes.services.interfaces.IVotoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class VotoService implements IVotoService {
 
@@ -39,17 +41,21 @@ public class VotoService implements IVotoService {
     public ResultadoResponseDto buscarResultado(UUID pautaId) {
 
         if (!pautaRepository.existsById(pautaId)) {
-            throw new EntityNotFoundException("Pauta não encontrada.");
+            log.error(String.format("Pauta %s não encontrada no banco de dados", pautaId));
+            throw new EntityNotFoundException("Pauta não encontrada");
         }
 
         if (!sessaoRepository.existsByPauta_Id(pautaId)) {
-            throw new EntityNotFoundException("Não a sessão de votação para essa pauta.");
+            log.error(String.format("Não existe sessão de votação para pauta %s no banco de dados", pautaId));
+            throw new EntityNotFoundException("Não a sessão de votação para essa pauta");
         }
 
         var votos = votoRepository.buscarVotos(pautaId).get(0);
 
         ResultadoResponseDto resultado = new ResultadoResponseDto(Integer.parseInt(votos[0].toString()), Integer.parseInt(votos[1].toString()));
         resultado.montarResultado();
+
+        log.info(String.format("Montagem do resultado finalizada com sucesso para pauta %s [%s]", pautaId, resultado.getResultado()));
 
         return resultado;
     }
