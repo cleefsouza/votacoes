@@ -2,3 +2,6 @@ version: 1
 commands:
   build: ./mvnw clean install
   start: java -jar target/votacoes-0.0.1-SNAPSHOT.jar
+
+env:
+  JAVA_VERSION: "11"
