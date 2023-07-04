@@ -30,6 +30,10 @@ docker-compose up -d
 ``` shell
 mvn spring-boot:run
 ```
+- Execute os testes da aplicação
+``` shell
+mvn test
+```
 
 ## Utilização :airplane:
 Crie suas requests no cliente rest de sua preferencia. **Para fins de exercício**, a segurança dos recursos é abstraída e qualquer chamada para os mesmos é considerada como autorizada.
