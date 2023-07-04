@@ -5,6 +5,7 @@ import com.api.votacoes.models.SessaoModel;
 import com.api.votacoes.repositories.SessaoRepository;
 import com.api.votacoes.services.interfaces.ISessaoService;
 import com.api.votacoes.services.interfaces.IVotoService;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -77,5 +78,9 @@ public class SessaoService implements ISessaoService {
 
     public boolean existeSessao(UUID pautaId) {
         return sessaoRepository.existsByPauta_Id(pautaId);
+    }
+
+    protected void setExecutorService(ScheduledExecutorService scheduledExecutorService) {
+        this.executorService = scheduledExecutorService;
     }
 }

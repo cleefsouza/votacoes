@@ -52,8 +52,6 @@ public class VotoController {
 
         PautaModel pauta = this.validarPauta(pautaId);
 
-        // verificar cpf do associado
-
         AssociadoModel associado = this.validarAssociado(votoRequestDto.getCpf(), pauta.getId());
 
         var votoModel = VotoModel.build(votoRequestDto.getVoto(), pauta, associado);

@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -24,5 +24,5 @@ public class PautaModel implements Serializable {
     private String descricao;
 
     @Column(nullable = false)
-    private LocalDateTime dataCriacao;
+    private LocalDate dataCriacao;
 }

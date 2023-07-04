@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -28,7 +28,7 @@ public class SessaoModel implements Serializable {
     private boolean encerrada;
 
     @Column(nullable = false)
-    private LocalDateTime dataCriacao;
+    private LocalDate dataCriacao;
 
     public void encerrarSessao() {
         this.encerrada = true;

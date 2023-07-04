@@ -4,8 +4,6 @@ import com.api.votacoes.dtos.request.PautaRequestDto;
 import com.api.votacoes.models.PautaModel;
 import com.api.votacoes.services.interfaces.IPautaService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.ZoneId;
 
 import static com.api.votacoes.utils.ConstantesUtils.PAUTA_URL;
@@ -44,7 +42,7 @@ public class PautaController {
 
         var pautaModel = new PautaModel();
         BeanUtils.copyProperties(pautaRequestDto, pautaModel);
-        pautaModel.setDataCriacao(LocalDateTime.now(ZoneId.of("UTC")));
+        pautaModel.setDataCriacao(LocalDate.now(ZoneId.of("UTC")));
 
         log.info(String.format("Iniciando persistencia da pauta \"%s\"", pautaModel.getTitulo()));
         return ResponseEntity.status(HttpStatus.CREATED).body(pautaService.salvar(pautaModel));

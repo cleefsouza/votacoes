@@ -16,16 +16,19 @@ public class RabbitMqService {
 
     private final Queue fila;
 
-    public RabbitMqService(ConnectionFactory conexao, Queue fila) {
+    private final RabbitTemplate rabbitTemplate;
+
+    public RabbitMqService(ConnectionFactory conexao, Queue fila, RabbitTemplate rabbitTemplate) {
         this.conexao = conexao;
         this.fila = fila;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public void enviarMensagem(Object object) {
         try {
             var json = new ObjectMapper().writeValueAsString(object);
-            RabbitTemplate template = new RabbitTemplate(conexao);
-            template.convertAndSend(fila.getName(), json.getBytes());
+            rabbitTemplate.setConnectionFactory(conexao);
+            rabbitTemplate.convertAndSend(fila.getName(), json);
             log.info(String.format("Mensagem enviada com sucesso para a fila \"%s\"", fila.getName()));
         } catch (Exception e) {
             log.error("Ocorreu um erro ao tentar enviar a mensagem para fila no rabbitmq");

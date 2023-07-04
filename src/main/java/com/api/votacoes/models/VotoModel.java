@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.UUID;
 
@@ -30,7 +30,7 @@ public class VotoModel implements Serializable {
     private AssociadoModel associado;
 
     @Column(nullable = false)
-    private LocalDateTime dataCriacao;
+    private LocalDate dataCriacao;
 
     public static VotoModel build(String voto, PautaModel pauta, AssociadoModel associado) {
 
@@ -38,7 +38,7 @@ public class VotoModel implements Serializable {
         votoModel.setVoto(voto);
         votoModel.setPauta(pauta);
         votoModel.setAssociado(associado);
-        votoModel.setDataCriacao(LocalDateTime.now(ZoneId.of("UTC")));
+        votoModel.setDataCriacao(LocalDate.now(ZoneId.of("UTC")));
 
         return votoModel;
     }

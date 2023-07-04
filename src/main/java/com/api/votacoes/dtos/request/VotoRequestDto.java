@@ -1,6 +1,8 @@
 package com.api.votacoes.dtos.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.br.CPF;
@@ -11,6 +13,8 @@ import javax.validation.constraints.Size;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class VotoRequestDto {
 
     @NotBlank(message = "Voto com formato inválido")

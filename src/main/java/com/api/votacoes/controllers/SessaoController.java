@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.UUID;
 
@@ -53,7 +53,7 @@ public class SessaoController {
         SessaoModel sessaoModel = new SessaoModel();
         BeanUtils.copyProperties(sessaoRequestDto, sessaoModel);
         sessaoModel.setPauta(pauta.get());
-        sessaoModel.setDataCriacao(LocalDateTime.now(ZoneId.of("UTC")));
+        sessaoModel.setDataCriacao(LocalDate.now(ZoneId.of("UTC")));
 
         log.info("Iniciando persistencia da sessão da pauta " + pautaId);
         SessaoModel response = sessaoService.salvar(sessaoModel);

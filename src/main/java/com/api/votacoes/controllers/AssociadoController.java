@@ -6,12 +6,16 @@ import com.api.votacoes.services.interfaces.IAssociadoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.ZoneId;
 
 import static com.api.votacoes.utils.ConstantesUtils.ASSOCIADO_URL;
@@ -38,9 +42,15 @@ public class AssociadoController {
 
         var associadoModel = new AssociadoModel();
         BeanUtils.copyProperties(associadoRequestDto, associadoModel);
-        associadoModel.setDataCriacao(LocalDateTime.now(ZoneId.of("UTC")));
+        associadoModel.setDataCriacao(LocalDate.now(ZoneId.of("UTC")));
 
         log.info(String.format("Iniciando persistencia do associado \"%s\"", associadoModel.getNome()));
         return ResponseEntity.status(HttpStatus.CREATED).body(associadoService.salvar(associadoModel));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<AssociadoModel>> buscarAssociados(@PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("Listando associados cadastrados");
+        return ResponseEntity.status(HttpStatus.OK).body(associadoService.buscarAssociados(pageable));
     }
 }
