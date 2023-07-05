@@ -4,6 +4,9 @@
 ## Visão Geral :speech_balloon:
 No cooperativismo, cada associado possui um voto e as decisões são tomadas em assembleias, por votação. A partir disso, foi desenvolvido uma simples api para gerenciar essas sessões de votação. A solução é executada na nuvem e promover algumas funcionalidades, como cadastrar uma nova pauta, iniciar uma sessão de votação e consultar o resultado final da votação.
 
+**URL de acesso**: [votacoes-api.up.railway.app](https://votacoes-api.up.railway.app)  
+Obs: endpoints descritos mais abaixo no readme
+
 ## Preparação Ambiente :computer:
 - JDK 11
 - Maven
